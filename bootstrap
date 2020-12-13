@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# user check
+# this should hopefully always return the user who is calling sudo instead of root
+if [ "$USER" == 'root' ]; then
+	if [ "$SUDO_USER" == 'root' ]; then
+		user=$(who | awk '{print $1}')
+	else
+		user="$SUDO_USER"
+	fi
+else
+	user="$USER"
+fi
+[ "$user" == 'root' ] && echo 'cannot determine non-root user' && exit 0
+echo "detected user: $user"
+
+
+#sudo apt update && sudo apt upgrade -y
+#sudo apt install -y python3-venv
+sudo -u $user mkdir -p "/home/$user/.ansible" && cd "/home/$user/.ansible"
+sudo -u $user python3 -m venv venv
+sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/requirements.txt --output requirements.txt
+sudo -su $user source venv/bin/activate
+sudo -u $user venv/bin/pip install --upgrade pip
+sudo -u $user venv/bin/pip install setuptools --upgrade
+sudo -u $user venv/bin/pip install wheel
+sudo -u $user venv/bin/pip install -r requirements.txt
+
