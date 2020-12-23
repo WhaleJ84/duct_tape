@@ -57,7 +57,7 @@ ansible-lint . || exit 1
 ```
 
 - pre-push
-	- I plan to use `molecule test` but am experiencing a [bug](https://stackoverflow.com/questions/35176548/authentication-or-permission-failure-did-not-have-permissions-on-the-remote-di://stackoverflow.com/questions/35176548/authentication-or-permission-failure-did-not-have-permissions-on-the-remote-dir) that no answers have fixed.
+	- I plan to use `molecule test` but am experiencing a [bug](https://stackoverflow.com/questions/35176548/authentication-or-permission-failure-did-not-have-permissions-on-the-remote-dir) that no answers have fixed.
 I am hoping Ansible 2.11 will fix this.
 
 ## Inspirations
