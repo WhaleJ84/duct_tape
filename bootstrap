@@ -43,22 +43,40 @@ check_hash(){
 
 #display_message 'Downloading required apt packages'
 #sudo apt update && sudo apt upgrade -y
-#sudo apt install -y python3-venv python3-apt
+#sudo apt install -y git python3-venv python3-apt python3-distutils-extra
 sudo -u $user mkdir -p "/home/$user/.ansible" && cd "/home/$user/.ansible"
 
-display_message 'Downloading latest hashes.txt file'
-#exit 0
-sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/hashes.txt --output /tmp/duct-tape_hashes.txt
+#display_message 'Downloading latest hashes.txt file'
+#sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/hashes.txt --output /tmp/duct-tape_hashes.txt
 
-if [ ! -f 'requirements.txt' ] || [ "$(check_hash 'requirements.txt')" == 1 ]; then
-    display_message 'Downloading latest requiremets.txt file'
-    sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/requirements.txt --output requirements.txt
+#if [ ! -f 'requirements.txt' ] || [ "$(check_hash 'requirements.txt')" == 1 ]; then
+#    display_message 'Downloading latest requiremets.txt file'
+#    sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/requirements.txt --output requirements.txt
+#fi
+
+if [ ! -d '.git' ]; then
+    display_message 'Cloning git repository'
+    git clone https://github.com/WhaleJ84/duct_tape.git
+    mv duct_tape/* .
+    mv duct_tape/.git .
+    mv duct_tape/.yamllint .
+    rmdir duct_tape
+else
+    display_message 'Pulling latest git changes'
+    git pull
 fi
 
 if [ ! -d 'venv' ]; then
     display_message 'Creating Python virtual environment'
     sudo -u $user python3 -m venv venv
+    echo 'DONE'
 fi
+
+display_message 'Manually installing python3-apt'  # See: https://github.com/ansible/ansible/issues/14468
+sudo -u $user cp -r files/python3-apt/usr/lib/python3/dist-packages/* venv/lib/python3.8/site-packages/
+sudo -u $user mv venv/lib/python3.8/site-packages/apt_inst.cpython-38-x86_64-linux-gnu.so venv/lib/python3.8/site-packages/apt_inst.so
+sudo -u $user mv venv/lib/python3.8/site-packages/apt_pkg.cpython-38-x86_64-linux-gnu.so venv/lib/python3.8/site-packages/apt_pkg.so
+echo 'DONE'
 
 display_message 'Downloading/upgrading required pip packages'
 sudo -su $user source venv/bin/activate
@@ -66,10 +84,10 @@ sudo -u $user venv/bin/pip install --upgrade pip setuptools
 sudo -u $user venv/bin/pip install wheel
 sudo -u $user venv/bin/pip install -r requirements.txt
 
-if [ ! -f 'test.yml' ] || [ "$(check_hash 'test.yml')" == 1 ]; then
-    display_message 'Downloading latest test.yml file'
-    sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/test.yml --output test.yml
-fi
+#if [ ! -f 'test.yml' ] || [ "$(check_hash 'test.yml')" == 1 ]; then
+#    display_message 'Downloading latest test.yml file'
+#    sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/test.yml --output test.yml
+#fi
 
 display_message 'Running ansible playbook'
 sudo -u $user venv/bin/ansible-playbook -K test.yml

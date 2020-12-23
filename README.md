@@ -14,6 +14,21 @@ If you have pulled it locally, you can just run `./bootstrap` or `curl file:///P
 
 Either way, the commands will all do the same thing.
 
+## Updating the manual python3-apt installation
+
+As this has just been a work-around for a bug, hopefully this gets removed in future.
+Until that time, I am manually installing python3-apt into the py-venv to fix playbooks.
+If the package needs to be upgraded, so so with the following commands:
+
+```
+cd files
+apt download python3-apt
+dpkg -x python3-apt_$NEWER-VERSION.deb python3-apt
+cd python3-apt/usr/lib/python3/dist-packages/
+mv apt_inst.cpython-$VERSION.so apt_inst.so
+mv apt_pkg.cpython-$VERSION.so apt_pkg.so
+```
+
 ## Git hooks
 
 As the `.git` directory is ignored by default, I will note the specific hooks I use locally.
