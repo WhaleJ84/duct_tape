@@ -1,0 +1,7 @@
+9f4092fb05a89c22aabb53deaabfc073  ./README.md
+7b128961f4ee1d85f006c1a42bf9d3d5  ./bootstrap
+d287bd5af51923bd4b6f43deba63603c  ./dev-requirements.txt
+58cbbb0f195c292fc3121223913538cc  ./hashes.txt
+64423909bce0066059328b3193b57ba6  ./local.yml
+1dbcc98b849fbbf388f76f7095f4ef8d  ./requirements.txt
+16ba6439e4efb469ae7fcb38dfdf0860  ./test.yml
