@@ -43,16 +43,27 @@ check_hash(){
 
 #display_message 'Downloading required apt packages'
 #sudo apt update && sudo apt upgrade -y
-#sudo apt install -y python3-venv python3-apt python3-distutils-extra
+#sudo apt install -y git python3-venv python3-apt python3-distutils-extra
 sudo -u $user mkdir -p "/home/$user/.ansible" && cd "/home/$user/.ansible"
 
-display_message 'Downloading latest hashes.txt file'
-#exit 0
-sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/hashes.txt --output /tmp/duct-tape_hashes.txt
+#display_message 'Downloading latest hashes.txt file'
+#sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/hashes.txt --output /tmp/duct-tape_hashes.txt
 
-if [ ! -f 'requirements.txt' ] || [ "$(check_hash 'requirements.txt')" == 1 ]; then
-    display_message 'Downloading latest requiremets.txt file'
-    sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/requirements.txt --output requirements.txt
+#if [ ! -f 'requirements.txt' ] || [ "$(check_hash 'requirements.txt')" == 1 ]; then
+#    display_message 'Downloading latest requiremets.txt file'
+#    sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/requirements.txt --output requirements.txt
+#fi
+
+if [ ! -d '.git' ]; then
+    display_message 'Cloning git repository'
+    git clone https://github.com/WhaleJ84/duct_tape.git
+    mv duct_tape/* .
+    mv duct_tape/.git .
+    mv duct_tape/.yamllint .
+    rmdir duct_tape
+else
+    display_message 'Pulling latest git changes'
+    git pull
 fi
 
 if [ ! -d 'venv' ]; then
@@ -73,10 +84,10 @@ sudo -u $user venv/bin/pip install --upgrade pip setuptools
 sudo -u $user venv/bin/pip install wheel
 sudo -u $user venv/bin/pip install -r requirements.txt
 
-if [ ! -f 'test.yml' ] || [ "$(check_hash 'test.yml')" == 1 ]; then
-    display_message 'Downloading latest test.yml file'
-    sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/test.yml --output test.yml
-fi
+#if [ ! -f 'test.yml' ] || [ "$(check_hash 'test.yml')" == 1 ]; then
+#    display_message 'Downloading latest test.yml file'
+#    sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/test.yml --output test.yml
+#fi
 
 display_message 'Running ansible playbook'
 sudo -u $user venv/bin/ansible-playbook -K test.yml

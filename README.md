@@ -24,6 +24,9 @@ If the package needs to be upgraded, so so with the following commands:
 cd files
 apt download python3-apt
 dpkg -x python3-apt_$NEWER-VERSION.deb python3-apt
+cd python3-apt/usr/lib/python3/dist-packages/
+mv apt_inst.cpython-$VERSION.so apt_inst.so
+mv apt_pkg.cpython-$VERSION.so apt_pkg.so
 ```
 
 ## Git hooks
