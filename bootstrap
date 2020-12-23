@@ -14,15 +14,63 @@ fi
 [ "$user" == 'root' ] && echo 'cannot determine non-root user' && exit 0
 echo "detected user: $user"
 
+display_message(){
+    CHARS=$(wc -c <<< "$1")
+    REMAINING_CHARS=$(bc <<< "70-$CHARS")
+    CHARS_PER_SIDE=$(bc <<< "$REMAINING_CHARS/2")
+    TOTAL_CHARS=$(bc <<< "$CHARS_PER_SIDE*2+$CHARS")
+    if [ "$TOTAL_CHARS" != 70 ]; then
+        LEFT_CHARS=$(awk "BEGIN {while (z++ < $CHARS_PER_SIDE) printf \"=\"}")
+        RIGHT_CHARS=$(awk "BEGIN {while (z++ < $(bc <<< $CHARS_PER_SIDE+1)) printf \"=\"}")
+        echo -e "\n# $LEFT_CHARS [ $1 ] $RIGHT_CHARS #\n"
+    else
+        SIDE_CHARS=$(awk "BEGIN {while (z++ < $CHARS_PER_SIDE) printf \"=\"}")
+        echo -e "\n# $SIDE_CHARS [ $1 ] $SIDE_CHARS #\n"
+    fi
+}
 
+check_hash(){
+    SOURCE_HASH=$(md5sum $1)
+    TARGET_HASH=$(grep /$1 /tmp/duct-tape_hashes.txt | awk '{print $1}')
+
+    if [ "$SOURCE_HASH" != "$TARGET_HASH" ]; then
+        echo "INFORMATION: hashes for $1 do not match"
+        return 1
+    else
+        return 0
+    fi
+}
+
+#display_message 'Downloading required apt packages'
 #sudo apt update && sudo apt upgrade -y
-#sudo apt install -y python3-venv
+#sudo apt install -y python3-venv python3-apt
 sudo -u $user mkdir -p "/home/$user/.ansible" && cd "/home/$user/.ansible"
-sudo -u $user python3 -m venv venv
-sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/requirements.txt --output requirements.txt
+
+display_message 'Downloading latest hashes.txt file'
+#exit 0
+sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/dev/hashes.txt --output /tmp/duct-tape_hashes.txt
+
+if [ ! -f 'requirements.txt' ] || [ "$(check_hash 'requirements.txt')" == 1 ]; then
+    display_message 'Downloading latest requiremets.txt file'
+    sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/requirements.txt --output requirements.txt
+fi
+
+if [ ! -d 'venv' ]; then
+    display_message 'Creating Python virtual environment'
+    sudo -u $user python3 -m venv venv
+fi
+
+display_message 'Downloading/upgrading required pip packages'
 sudo -su $user source venv/bin/activate
-sudo -u $user venv/bin/pip install --upgrade pip
-sudo -u $user venv/bin/pip install setuptools --upgrade
+sudo -u $user venv/bin/pip install --upgrade pip setuptools
 sudo -u $user venv/bin/pip install wheel
 sudo -u $user venv/bin/pip install -r requirements.txt
+
+if [ ! -f 'test.yml' ] || [ "$(check_hash 'test.yml')" == 1 ]; then
+    display_message 'Downloading latest test.yml file'
+    sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/test.yml --output test.yml
+fi
+
+display_message 'Running ansible playbook'
+sudo -u $user venv/bin/ansible-playbook -K test.yml
 
