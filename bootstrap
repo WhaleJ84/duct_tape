@@ -48,7 +48,7 @@ sudo -u $user mkdir -p "/home/$user/.ansible" && cd "/home/$user/.ansible"
 
 display_message 'Downloading latest hashes.txt file'
 #exit 0
-sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/dev/hashes.txt --output /tmp/duct-tape_hashes.txt
+sudo -u $user curl https://raw.githubusercontent.com/WhaleJ84/duct_tape/main/hashes.txt --output /tmp/duct-tape_hashes.txt
 
 if [ ! -f 'requirements.txt' ] || [ "$(check_hash 'requirements.txt')" == 1 ]; then
     display_message 'Downloading latest requiremets.txt file'
