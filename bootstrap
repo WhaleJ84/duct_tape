@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # user check
 # this should hopefully always return the user who is calling sudo instead of root
@@ -46,7 +46,7 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y git python3-venv python3-apt python3-distutils-extra software-properties-common
 sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install -y ansible
-sudo -u $user mkdir -p ~/duct_tape && sudo -u $user cd ~/duct_tape
+sudo -u $user mkdir -p "/home/$user/duct_tape" && sudo -u $user cd "/home/$user/duct_tape"
 
 if [ ! -d '.git' ]; then
     display_message 'Cloning git repository'
