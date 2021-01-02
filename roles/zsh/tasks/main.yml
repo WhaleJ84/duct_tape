@@ -11,12 +11,6 @@
     path: /etc/zsh/zshenv
     line: 'export ZDOTDIR=$HOME/.config/zsh'
 
-- name: Ensure Bash config files are unstowed
-  command:
-    chdir: '/home/{{ user }}/.dotfiles/'
-    cmd: stow -D bash
-    removes: '/home/{{ user }}/.bashrc'
-
 - name: Ensure Zsh config files are stowed
   command:
     chdir: '/home/{{ user }}/.dotfiles/'
