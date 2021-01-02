@@ -1,0 +1,18 @@
+---
+- name: Ensure Git is installed
+  apt:
+    name: git
+    state: present
+  become: true
+
+- name: Ensure Stow is installed
+  apt:
+    name: stow
+    state: present
+  become: true
+
+- name: Pull dotfiles repository
+  git:
+    name: https://github.com/WhaleJ84/dotfiles.git
+    dest: '/home/{{ user }}/.dotfiles/'
+...

@@ -1,0 +1,15 @@
+---
+- name: Ensure ~/.local/bin/ exists
+  file:
+    path: '/home/{{ user }}/.local/bin/'
+    state: directory
+    recurse: true
+    owner: '{{ user }}'
+    group: '{{ user }}'
+
+- name: Ensure `sc` command exists in ~/.local/bin/
+  get_url:
+    url: https://raw.githubusercontent.com/WhaleJ84/shell_tidbits/master/sc
+    dest: '/home/{{ user }}/.local/bin/sc'
+    mode: '775'
+...

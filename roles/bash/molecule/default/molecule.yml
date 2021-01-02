@@ -1,0 +1,13 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: docker.io/geerlingguy/docker-ubuntu2004-ansible
+    pull: True
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

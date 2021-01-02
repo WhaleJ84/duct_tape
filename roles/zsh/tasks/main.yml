@@ -1,0 +1,31 @@
+---
+- name: Ensure Zsh is installed
+  apt:
+    name: zsh
+    state: present
+  become: true
+
+- name: Ensure Zsh looks in $XDG_CONFIG_HOME for rc file
+  become: true
+  lineinfile:
+    path: /etc/zsh/zshenv
+    line: 'export ZDOTDIR=$HOME/.config/zsh'
+
+- name: Ensure Bash config files are unstowed
+  command:
+    chdir: '/home/{{ user }}/.dotfiles/'
+    cmd: stow -D bash
+    removes: '/home/{{ user }}/.bashrc'
+
+- name: Ensure Zsh config files are stowed
+  command:
+    chdir: '/home/{{ user }}/.dotfiles/'
+    cmd: stow zsh
+    creates: '/home/{{ user }}/.config/zsh/.zshrc'
+
+- name: Ensure Zsh is the default shell
+  user:
+    name: '{{ user }}'
+    shell: /bin/zsh
+  become: true
+...

@@ -1,0 +1,11 @@
+---
+- name: Ensure default profile has been removed
+  file:
+    name: '/home/{{ user }}/.profile'
+    state: absent
+
+- name: Ensure profile has been stowed
+  command:
+    chdir: '/home/{{ user }}/.dotfiles/'
+    cmd: stow profile
+    creates: '/home/{{ user }}/.profile'

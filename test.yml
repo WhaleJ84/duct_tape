@@ -1,11 +1,41 @@
 ---
 - hosts: localhost
-  become: true
+
+  vars:
+    shell: 'zsh'
+    user: 'james'
 
   tasks:
-    - name: update apt cache if it hasn't been done in the past hour
+    - name: Update Apt cache if it hasn't been done in the past hour
       apt:
         update_cache: true
         cache_valid_time: 3600
       when: ansible_os_family == 'Debian'
+      become: true
+
+    - name: Setup Stow
+      include_role:
+        name: stow
+
+    - name: Ensure XDG base directory variables are stowed
+      command:
+        chdir: '/home/{{ user }}/.dotfiles/'
+        cmd: stow xdg-base-directories
+        creates: '/home/{{ user }}/.config/environment.d/010-xdg.conf'
+
+    - name: Setup profile
+      include_role:
+        name: profile
+
+    - name: Setup shell
+      include_role:
+        name: '{{ shell }}'
+
+    - name: Install custom commands
+      include_role:
+        name: custom_commands
+
+    - name: Setup Vim
+      include_role:
+        name: vim
 ...

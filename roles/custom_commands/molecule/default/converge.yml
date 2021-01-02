@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include custom_commands"
+      include_role:
+        name: "custom_commands"

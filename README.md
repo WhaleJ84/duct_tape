@@ -29,6 +29,19 @@ mv apt_inst.cpython-$VERSION.so apt_inst.so
 mv apt_pkg.cpython-$VERSION.so apt_pkg.so
 ```
 
+## Molecule notes
+
+As I'm trying to get this working I'll put a load of notes here for logging purposes.
+
+- Create roles with `molecule init role -d docker $ROLE_NAME` [Source](https://molecule.readthedocs.io/en/stable-1.18/driver/)
+- [Most recent issue](https://github.com/ansible-community/molecule/issues/1209)
+
+## Ansible and Molecule output colours
+
+To ensure both Ansible and Molecule use colours in their output, use the following:
+
+`export PY_COLORS='1'; export ANSIBLE_FORCE_COLOR='1'` [Source](https://www.jeffgeerling.com/blog/2020/getting-colorized-output-molecule-and-ansible-on-github-actions-ci)
+
 ## Git hooks
 
 As the `.git` directory is ignored by default, I will note the specific hooks I use locally.

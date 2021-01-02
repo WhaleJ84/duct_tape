@@ -1,0 +1,30 @@
+---
+- name: Ensure Bash is installed
+  apt:
+    name: bash
+    state: present
+  become: true
+
+- name: Ensure Bash is default shell
+  user:
+    name: '{{ user }}'
+    shell: /bin/bash
+  become: true
+
+- name: Ensure Zsh config files are unstowed
+  command:
+    chdir: '/home/{{ user }}/.dotfiles/'
+    cmd: stow -D zsh
+    removes: '/home/{{ user }}/.zshenv'
+
+- name: Ensure default bashrc is removed
+  file:
+    name: '/home/{{ user }}/.bashrc'
+    state: absent
+
+- name: Ensure Bash config files are stowed
+  command:
+    chdir: '/home/{{ user }}/.dotfiles/'
+    cmd: stow bash
+    creates: '/home/{{ user }}/.config/bash/rc'
+...

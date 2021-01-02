@@ -42,8 +42,8 @@ check_hash(){
 }
 
 #display_message 'Downloading required apt packages'
-#sudo apt update && sudo apt upgrade -y
-#sudo apt install -y git python3-venv python3-apt python3-distutils-extra
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y git python3-venv python3-apt python3-distutils-extra
 sudo -u $user mkdir -p "/home/$user/.ansible" && cd "/home/$user/.ansible"
 
 if [ ! -d '.git' ]; then
