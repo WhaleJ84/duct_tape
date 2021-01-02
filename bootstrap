@@ -41,10 +41,11 @@ check_hash(){
     fi
 }
 
-#display_message 'Downloading required apt packages'
+display_message 'Downloading required apt packages'
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y git python3-venv python3-apt python3-distutils-extra
-sudo -u $user mkdir -p "/home/$user/.ansible" && cd "/home/$user/.ansible"
+sudo apt install -y git python3-venv python3-apt python3-distutils-extra software-properties-common
+sudo apt-add-repository --yes --update ppa:ansible/ansible
+sudo apt install -y ansible
 
 if [ ! -d '.git' ]; then
     display_message 'Cloning git repository'
@@ -58,22 +59,6 @@ else
     git pull
 fi
 
-if [ ! -d 'venv' ]; then
-    display_message 'Creating Python virtual environment'
-    sudo -u $user python3 -m venv venv
-    echo 'DONE'
-fi
-
-display_message 'Manually installing python3-apt'  # See: https://github.com/ansible/ansible/issues/14468
-sudo -u $user cp -r files/python3-apt/usr/lib/python3/dist-packages/* venv/lib/python3.8/site-packages/
-echo 'DONE'
-
-display_message 'Downloading/upgrading required pip packages'
-sudo -su $user source venv/bin/activate
-sudo -u $user venv/bin/pip install --upgrade pip setuptools
-sudo -u $user venv/bin/pip install wheel
-sudo -u $user venv/bin/pip install -r requirements.txt
-
 display_message 'Running ansible playbook'
-sudo -u $user venv/bin/ansible-playbook -K test.yml
+sudo -u $user ansible-playbook -K test.yml
 
