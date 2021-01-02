@@ -46,18 +46,18 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y git python3-venv python3-apt python3-distutils-extra software-properties-common
 sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install -y ansible
-sudo -u $user mkdir -p ~/duct_tape && cd ~/duct_tape
+sudo -u $user mkdir -p ~/duct_tape && sudo -u $user cd ~/duct_tape
 
 if [ ! -d '.git' ]; then
     display_message 'Cloning git repository'
-    git clone https://github.com/WhaleJ84/duct_tape.git
-    mv duct_tape/* .
-    mv duct_tape/.git .
-    mv duct_tape/.yamllint .
-    rmdir duct_tape
+    sudo -u $user git clone https://github.com/WhaleJ84/duct_tape.git
+    sudo -u $user mv duct_tape/* .
+    sudo -u $user mv duct_tape/.git .
+    sudo -u $user mv duct_tape/.yamllint .
+    sudo -u $user rmdir duct_tape
 else
     display_message 'Pulling latest git changes'
-    git pull
+    sudo -u $user git pull
 fi
 
 display_message 'Running ansible playbook'
