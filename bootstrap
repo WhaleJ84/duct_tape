@@ -2,8 +2,8 @@
 
 # user check
 # this should hopefully always return the user who is calling sudo instead of root
-if [ "$USER" == 'root' ]; then
-	if [ "$SUDO_USER" == 'root' ]; then
+if [ "$USER" = 'root' ]; then
+	if [ "$SUDO_USER" = 'root' ]; then
 		user=$(who | awk '{print $1}')
 	else
 		user="$SUDO_USER"
@@ -11,17 +11,17 @@ if [ "$USER" == 'root' ]; then
 else
 	user="$USER"
 fi
-[ "$user" == 'root' ] && echo 'cannot determine non-root user' && exit 0
+[ "$user" = 'root' ] && echo 'cannot determine non-root user' && exit 0
 echo "detected user: $user"
 
 display_message(){
-    CHARS=$(wc -c <<< "$1")
-    REMAINING_CHARS=$(bc <<< "70-$CHARS")
-    CHARS_PER_SIDE=$(bc <<< "$REMAINING_CHARS/2")
-    TOTAL_CHARS=$(bc <<< "$CHARS_PER_SIDE*2+$CHARS")
+    CHARS=${#1}
+    REMAINING_CHARS=$(echo "70-$CHARS" | bc)
+    CHARS_PER_SIDE=$(echo "$REMAINING_CHARS/2" |bc)
+    TOTAL_CHARS=$(echo "$CHARS_PER_SIDE*2+$CHARS" | bc)
     if [ "$TOTAL_CHARS" != 70 ]; then
         LEFT_CHARS=$(awk "BEGIN {while (z++ < $CHARS_PER_SIDE) printf \"=\"}")
-        RIGHT_CHARS=$(awk "BEGIN {while (z++ < $(bc <<< $CHARS_PER_SIDE+1)) printf \"=\"}")
+        RIGHT_CHARS=$(awk "BEGIN {while (z++ < $(echo "$CHARS_PER_SIDE+1" | bc)) printf \"=\"}")
         echo -e "\n# $LEFT_CHARS [ $1 ] $RIGHT_CHARS #\n"
     else
         SIDE_CHARS=$(awk "BEGIN {while (z++ < $CHARS_PER_SIDE) printf \"=\"}")
@@ -30,8 +30,8 @@ display_message(){
 }
 
 check_hash(){
-    SOURCE_HASH=$(md5sum $1)
-    TARGET_HASH=$(grep /$1 /tmp/duct-tape_hashes.txt | awk '{print $1}')
+    SOURCE_HASH=$(md5sum "$1")
+    TARGET_HASH=$(grep "/$1" /tmp/duct-tape_hashes.txt | awk '{print $1}')
 
     if [ "$SOURCE_HASH" != "$TARGET_HASH" ]; then
         echo "INFORMATION: hashes for $1 do not match"
@@ -46,20 +46,21 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y git python3-venv python3-apt python3-distutils-extra software-properties-common
 sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install -y ansible
-sudo -u $user mkdir -p "/home/$user/duct_tape" && sudo -u $user cd "/home/$user/duct_tape"
+sudo -u "$user" mkdir -p "/home/$user/duct_tape"
+cd "/home/$user/duct_tape" || exit
 
 if [ ! -d '.git' ]; then
     display_message 'Cloning git repository'
-    sudo -u $user git clone https://github.com/WhaleJ84/duct_tape.git
-    sudo -u $user mv duct_tape/* .
-    sudo -u $user mv duct_tape/.git .
-    sudo -u $user mv duct_tape/.yamllint .
-    sudo -u $user rmdir duct_tape
+    sudo -u "$user" git clone https://github.com/WhaleJ84/duct_tape.git
+    sudo -u "$user" mv duct_tape/* .
+    sudo -u "$user" mv duct_tape/.git .
+    sudo -u "$user" mv duct_tape/.yamllint .
+    sudo -u "$user" rmdir duct_tape
 else
     display_message 'Pulling latest git changes'
-    sudo -u $user git pull
+    sudo -u "$user" git pull
 fi
 
 display_message 'Running ansible playbook'
-sudo -u $user ansible-playbook -K test.yml
+sudo -u "$user" ansible-playbook -K test.yml
 
