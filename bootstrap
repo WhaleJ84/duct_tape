@@ -61,6 +61,9 @@ else
     sudo -u "$user" git pull
 fi
 
+display_message 'Installing required ansible collections'
+sudo -u "$user" ansible-galaxy collection install community.general
+
 display_message 'Running ansible playbook'
 sudo -u "$user" ansible-playbook -K local.yml
 
