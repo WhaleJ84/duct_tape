@@ -22,10 +22,10 @@ display_message(){
     if [ "$TOTAL_CHARS" != 70 ]; then
         LEFT_CHARS=$(awk "BEGIN {while (z++ < $CHARS_PER_SIDE) printf \"=\"}")
         RIGHT_CHARS=$(awk "BEGIN {while (z++ < $(echo "$CHARS_PER_SIDE+1" | bc)) printf \"=\"}")
-        echo -e "\n# $LEFT_CHARS [ $1 ] $RIGHT_CHARS #\n"
+        printf '\n# %s [ %s ] %s #\n'  "$LEFT_CHARS" "$1" "$RIGHT_CHARS"
     else
         SIDE_CHARS=$(awk "BEGIN {while (z++ < $CHARS_PER_SIDE) printf \"=\"}")
-        echo -e "\n# $SIDE_CHARS [ $1 ] $SIDE_CHARS #\n"
+        printf '\n# %s [ %s ] %s #\n'  "$SIDE_CHARS" "$1" "$SIDE_CHARS"
     fi
 }
 
@@ -62,5 +62,5 @@ else
 fi
 
 display_message 'Running ansible playbook'
-sudo -u "$user" ansible-playbook -K test.yml
+sudo -u "$user" ansible-playbook -K local.yml
 
