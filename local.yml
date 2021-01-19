@@ -14,6 +14,10 @@
       become: true
 
   tasks:
+    - name: Configure Ubuntu settings
+      include_role:
+        name: ubuntu_settings
+
     - name: Setup Stow
       include_role:
         name: stow
@@ -27,6 +31,10 @@
     - name: Setup profle
       include_role:
         name: profile
+
+    - name: Ensure custom commands are in ~/.local/bin
+      include_role:
+        name: custom_commands
 
     - name: Setup shell
       include_role:
