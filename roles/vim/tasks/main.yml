@@ -1,2 +1,12 @@
 ---
-# tasks file for vim
+- name: Ensure Vim is installed
+  apt:
+    name: vim
+    state: present
+
+- name: Ensure Vim configs have been stowed
+  command:
+    chdir: '/home/{{ user }}/.dotfiles/'
+    cmd: stow vim
+    creates: '/home/{{ user }}/.vim/vimrc'
+...
