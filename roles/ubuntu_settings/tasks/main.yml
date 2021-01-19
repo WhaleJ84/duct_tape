@@ -1,6 +1,6 @@
 ---
 - name: Configure close shortcut to be Shift+Super+q
-  dconf:
+  community.general.dconf:
     key: "/org/gnome/desktop/wm/keybindings"
     value: "['<Shift><Super>q']"
     state: present
