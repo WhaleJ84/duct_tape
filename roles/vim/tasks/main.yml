@@ -3,6 +3,7 @@
   apt:
     name: vim
     state: present
+  become: true
 
 - name: Ensure Vim configs have been stowed
   command:
